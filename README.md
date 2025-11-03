@@ -2,7 +2,41 @@
 
 Uponor Smatrix Pulse heating/cooling integration for Homebridge.
 
-Inspired by https://github.com/asev/homeassistant-uponor.
+## About this Fork
+
+This plugin is a fork and continuation of the original [homebridge-plugin-uponor](https://github.com/alexmobo/homebridge-plugin-uponor). The primary goal of this fork is to modernize and maintain the plugin.
+
+## Installation
+
+Install the plugin via the Homebridge UI or manually via npm:
+
+```bash
+npm install -g homebridge-uponor
+```
+
+## Configuration
+
+Configure the plugin via the Homebridge UI or manually in your `config.json`:
+
+```json
+{
+    "platforms": [
+        {
+            "platform": "UponorPlatform",
+            "name": "Uponor",
+            "host": "192.168.1.100",
+            "refreshInterval": 60000
+        }
+    ]
+}
+```
+
+### Configuration Parameters
+
+- `platform` (required): Must be "UponorPlatform"
+- `name` (required): Name for the platform (e.g., "Uponor")
+- `host` (required): IP address or hostname of your Uponor R-208 module
+- `refreshInterval` (optional): Data refresh interval in milliseconds (default: 60000 = 1 minute)
 
 ## Supported devices
 
@@ -22,3 +56,8 @@ This integration communicates with Uponor Smatrix Pulse communication module R-2
 ## Feedback
 
 Your feedback, pull requests or any other contribution are very much welcome.
+
+## Credits
+
+Original plugin by [alexmobo](https://github.com/alexmobo/homebridge-plugin-uponor)  
+Maintained and developed by [Michael Päßler](https://github.com/kolorfilm)

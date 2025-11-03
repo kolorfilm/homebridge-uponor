@@ -1,21 +1,29 @@
 {
   "displayName": "Uponor Plugin",
-  "name": "homebridge-plugin-uponor",
-  "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "author": "Michael Päßler",
+  "name": "homebridge-uponor",
+  "version": "1.1.1-beta.0",
+  "description": "Homebridge plugin for Uponor underfloor heating and cooling systems",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alexmoboe/homebridge-plugin-uponor.git"
+    "url": "https://github.com/kolorfilm/homebridge-uponor.git"
   },
   "bugs": {
-    "url": "https://github.com/alexmobo/homebridge-plugin-uponor/issues"
+    "url": "https://github.com/kolorfilm/homebridge-uponor/issues"
   },
   "engines": {
-    "node": "^18.17.0",
-    "homebridge": "^1.6.0"
+    "node": "^24||^22",
+    "homebridge": "^1.11.1"
   },
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "config.schema.json",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "lint": "eslint src/**.ts --max-warnings=0",
     "watch": "npm run build && npm link && nodemon",
@@ -24,22 +32,28 @@
   },
   "keywords": [
     "homebridge-plugin",
-    "uponor"
+    "uponor",
+    "heating",
+    "cooling",
+    "thermostat",
+    "underfloor-heating",
+    "smart-home"
   ],
   "dependencies": {
-    "async-mutex": "^0.4.0",
-    "axios": "^1.6.0",
-    "bignumber.js": "^9.1.2"
+    "async-mutex": "^0.5.0",
+    "axios": "^1.13.1",
+    "bignumber.js": "^9.3.1"
   },
   "devDependencies": {
-    "@types/node": "^18.16.20",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
-    "eslint": "^8.45.0",
-    "homebridge": "^1.7.0",
-    "nodemon": "^3.0.1",
-    "rimraf": "^3.0.2",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "@eslint/js": "^9.39.0",
+    "@stylistic/eslint-plugin": "^5.5.0",
+    "@types/node": "^24.10.0",
+    "eslint": "^9.39.0",
+    "homebridge": "^1.11.1",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
   }
 }
