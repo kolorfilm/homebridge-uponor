@@ -13,6 +13,7 @@ export type UponorDevice = {
   targetTemperature: BigNumber;
   minLimitTemperature: BigNumber;
   maxLimitTemperature: BigNumber;
+  currentHumidity: BigNumber;
 };
 
 export enum UponorDeviceState {

@@ -5,56 +5,56 @@ import { MANUFACTURER } from '../devices/const';
 import { UponorDevice } from '../devices/UponorDevice';
 import BigNumber from 'bignumber.js';
 
-export class UponorCoolingSwitchAccessory {
-  private service: Service;
+export const createUponorCoolingSwitchAccessory = (
+  platform: UponorPlatform,
+  accessory: PlatformAccessory<UponorCoolingMode>,
+  thermostatAccessories: PlatformAccessory<UponorDevice>[],
+): void => {
+  // Setup accessory information
+  accessory.getService(platform.Service.AccessoryInformation)!
+    .setCharacteristic(platform.Characteristic.Manufacturer, MANUFACTURER)
+    .setCharacteristic(platform.Characteristic.Model, accessory.context.model);
 
-  constructor(
-    private readonly platform: UponorPlatform,
-    private readonly accessory: PlatformAccessory<UponorCoolingMode>,
-    private readonly thermostatAccessories: PlatformAccessory<UponorDevice>[],
-  ) {
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, MANUFACTURER)
-      .setCharacteristic(this.platform.Characteristic.Model, this.accessory.context.model);
+  // Get or create switch service
+  const service: Service = accessory.getService(platform.Service.Switch)
+    || accessory.addService(platform.Service.Switch);
 
-    this.service = this.accessory.getService(this.platform.Service.Switch)
-      || this.accessory.addService(this.platform.Service.Switch);
+  // Set initial characteristics
+  service.setCharacteristic(
+    platform.Characteristic.On,
+    accessory.context.isCoolingEnabled,
+  );
+  service.setCharacteristic(platform.Characteristic.Name, 'Modo Frío');
 
-    this.service.setCharacteristic(
-      this.platform.Characteristic.On,
-      this.accessory.context.isCoolingEnabled,
-    );
-    this.service.setCharacteristic(this.platform.Characteristic.Name, 'Modo Frío');
+  // Setup characteristic handlers
+  service.getCharacteristic(platform.Characteristic.On)
+    .onGet((): Promise<boolean> => platform.uponorProxy.isCoolingEnabled())
+    .onSet(async (value: CharacteristicValue): Promise<void> => {
+      const isCoolingEnabled: boolean = value as boolean;
 
-    this.service.getCharacteristic(this.platform.Characteristic.On)
-      .onGet((): Promise<boolean> => this.platform.uponorProxy.isCoolingEnabled())
-      .onSet(async (value: CharacteristicValue): Promise<void> => {
-        const isCoolingEnabled: boolean = value as boolean;
-
-        for (const thermostatAccessory of this.thermostatAccessories) {
-          if (isCoolingEnabled) {
-            const targetTemperature: BigNumber = await this.platform.uponorProxy.getTargetTemperature(thermostatAccessory.context.code);
-            const minLimitTemperature: BigNumber = this.platform.uponorProxy.getMinLimitTemperature(thermostatAccessory.context.code);
-            if (targetTemperature === minLimitTemperature) {
-              await this.platform.uponorProxy.setTargetTemperature(
-                thermostatAccessory.context.code,
-                this.platform.uponorProxy.getMaxLimitTemperature(thermostatAccessory.context.code),
-              );
-            }
-          } else {
-            const targetTemperature: BigNumber = await this.platform.uponorProxy.getTargetTemperature(thermostatAccessory.context.code);
-            const maxLimitTemperature: BigNumber = this.platform.uponorProxy.getMaxLimitTemperature(thermostatAccessory.context.code);
-            if (targetTemperature === maxLimitTemperature) {
-              await this.platform.uponorProxy.setTargetTemperature(
-                thermostatAccessory.context.code,
-                this.platform.uponorProxy.getMinLimitTemperature(thermostatAccessory.context.code),
-              );
-            }
+      for (const thermostatAccessory of thermostatAccessories) {
+        if (isCoolingEnabled) {
+          const targetTemperature: BigNumber = await platform.uponorProxy.getTargetTemperature(thermostatAccessory.context.code);
+          const minLimitTemperature: BigNumber = platform.uponorProxy.getMinLimitTemperature(thermostatAccessory.context.code);
+          if (targetTemperature === minLimitTemperature) {
+            await platform.uponorProxy.setTargetTemperature(
+              thermostatAccessory.context.code,
+              platform.uponorProxy.getMaxLimitTemperature(thermostatAccessory.context.code),
+            );
+          }
+        } else {
+          const targetTemperature: BigNumber = await platform.uponorProxy.getTargetTemperature(thermostatAccessory.context.code);
+          const maxLimitTemperature: BigNumber = platform.uponorProxy.getMaxLimitTemperature(thermostatAccessory.context.code);
+          if (targetTemperature === maxLimitTemperature) {
+            await platform.uponorProxy.setTargetTemperature(
+              thermostatAccessory.context.code,
+              platform.uponorProxy.getMinLimitTemperature(thermostatAccessory.context.code),
+            );
           }
         }
+      }
 
-        await this.platform.uponorProxy.setCoolingMode(isCoolingEnabled);
-        this.accessory.context.isCoolingEnabled = isCoolingEnabled;
-      });
-  }
-}
+      await platform.uponorProxy.setCoolingMode(isCoolingEnabled);
+      accessory.context.isCoolingEnabled = isCoolingEnabled;
+    });
+};
