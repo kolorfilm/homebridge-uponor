@@ -1,0 +1,10 @@
+# Ignore artifacts:
+dist
+package-lock.json
+frontend/coverage
+
+# Prettier is unable to infer a parser for Bash scripts
+**/*.sh
+
+# We want to have full manual control over the formatting of our pull request template
+.github/ISSUE_TEMPLATE/*

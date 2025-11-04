@@ -1,8 +1,8 @@
 {
-  "displayName": "Uponor Plugin",
-  "author": "Michael Päßler",
   "name": "homebridge-uponor",
   "version": "1.2.0-beta.0",
+  "author": "Michael Päßler",
+  "displayName": "Homebridge Uponor",
   "description": "Homebridge plugin for Uponor underfloor heating and cooling systems",
   "license": "Apache-2.0",
   "repository": {
@@ -25,10 +25,17 @@
     "LICENSE"
   ],
   "scripts": {
-    "lint": "eslint src/**.ts --max-warnings=0",
+    "build": "rimraf ./dist && tsc -p tsconfig.build.json",
     "watch": "npm run build && npm link && nodemon",
-    "build": "rimraf ./dist && tsc",
-    "prepublishOnly": "npm run lint && npm run build"
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "prettier": "prettier --check . --ignore-path .prettierignore --config .prettierrc",
+    "tsc": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "checkAll": "npm run lint && npm run prettier && npm run tsc && npm run test",
+    "prepublishOnly": "npm run checkAll && npm run build"
   },
   "keywords": [
     "homebridge-plugin",
@@ -45,15 +52,21 @@
     "bignumber.js": "^9.3.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.0",
-    "@stylistic/eslint-plugin": "^5.5.0",
+    "@eslint/js": "^9.39.1",
     "@types/node": "^24.10.0",
-    "eslint": "^9.39.0",
+    "@vitest/coverage-v8": "^4.0.7",
+    "@vitest/eslint-plugin": "^1.4.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.5.0",
     "homebridge": "^1.11.1",
     "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
     "rimraf": "^6.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.46.2"
+    "typescript-eslint": "^8.46.3",
+    "vitest": "^4.0.7"
   }
 }

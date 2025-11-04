@@ -14,10 +14,7 @@
         "title": "Display Unit",
         "type": "string",
         "required": true,
-        "enum": [
-          "CELSIUS",
-          "FAHRENHEIT"
-        ]
+        "enum": ["CELSIUS", "FAHRENHEIT"]
       }
     }
   }

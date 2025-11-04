@@ -10,19 +10,13 @@ import {
 } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME, TemperatureDisplayUnit } from './settings';
-import {
-  createUponorThermostatAccessory,
-} from './accessories/UponorThermostatAccessory';
+import { createUponorThermostatAccessory } from './accessories/UponorThermostatAccessory';
 import { createUponorProxy, UponorProxy } from './core/UponorProxy';
 import { UponorDevice } from './devices/UponorDevice';
 import { UponorCoolingMode } from './devices/UponorCoolingMode';
-import {
-  createUponorCoolingSwitchAccessory,
-} from './accessories/UponorCoolingSwitchAccessory';
+import { createUponorCoolingSwitchAccessory } from './accessories/UponorCoolingSwitchAccessory';
 import { UponorAwayMode } from './devices/UponorAwayMode';
-import {
-  createUponorAwaySwitchAccessory,
-} from './accessories/UponorAwaySwitchAccessory';
+import { createUponorAwaySwitchAccessory } from './accessories/UponorAwaySwitchAccessory';
 
 export class UponorPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
@@ -35,7 +29,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
-    public readonly api: API,
+    public readonly api: API
   ) {
     this.log.debug('Finished initializing platform:');
     this.log.debug('  - IP or Host:', this.config.host);
@@ -44,7 +38,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
     this.uponorProxy = createUponorProxy(
       this.log,
       this.config.host,
-      TemperatureDisplayUnit[this.config.displayUnit as keyof typeof TemperatureDisplayUnit],
+      TemperatureDisplayUnit[this.config.displayUnit as keyof typeof TemperatureDisplayUnit]
     );
 
     this.api.on('didFinishLaunching', async (): Promise<void> => {
@@ -67,7 +61,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
     for (const device of devices) {
       const uuid: string = this.api.hap.uuid.generate(device.id);
       const existingAccessory: PlatformAccessory | undefined = this.cachedAccessories.find(
-        (accessory: PlatformAccessory): boolean => accessory.UUID === uuid,
+        (accessory: PlatformAccessory): boolean => accessory.UUID === uuid
       );
 
       if (existingAccessory) {
@@ -84,7 +78,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
         const accessory: PlatformAccessory<UponorDevice> = new this.api.platformAccessory(
           device.name,
           uuid,
-          Categories.THERMOSTAT,
+          Categories.THERMOSTAT
         );
 
         accessory.context = device;
@@ -99,10 +93,13 @@ export class UponorPlatform implements DynamicPlatformPlugin {
     const coolingMode: UponorCoolingMode = await this.uponorProxy.getCoolingMode();
     const coolingUuid: string = this.api.hap.uuid.generate('cooling-mode-switch');
     const existingCoolingAccessory: PlatformAccessory | undefined = this.cachedAccessories.find(
-      (accessory: PlatformAccessory): boolean => accessory.UUID === coolingUuid,
+      (accessory: PlatformAccessory): boolean => accessory.UUID === coolingUuid
     );
     if (existingCoolingAccessory) {
-      this.log.info('Restoring existing accessory from cache:', existingCoolingAccessory.displayName);
+      this.log.info(
+        'Restoring existing accessory from cache:',
+        existingCoolingAccessory.displayName
+      );
 
       existingCoolingAccessory.context = coolingMode;
       this.api.updatePlatformAccessories([existingCoolingAccessory]);
@@ -110,7 +107,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
       createUponorCoolingSwitchAccessory(
         this,
         existingCoolingAccessory as PlatformAccessory<UponorCoolingMode>,
-        thermostatAccessories as PlatformAccessory<UponorDevice>[],
+        thermostatAccessories as PlatformAccessory<UponorDevice>[]
       );
     } else {
       this.log.info('Adding new accessory:', 'Cold mode');
@@ -118,7 +115,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
       const accessory: PlatformAccessory<UponorCoolingMode> = new this.api.platformAccessory(
         'Cold mode',
         coolingUuid,
-        Categories.SWITCH,
+        Categories.SWITCH
       );
 
       accessory.context = coolingMode;
@@ -126,7 +123,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
       createUponorCoolingSwitchAccessory(
         this,
         accessory,
-        thermostatAccessories as PlatformAccessory<UponorDevice>[],
+        thermostatAccessories as PlatformAccessory<UponorDevice>[]
       );
 
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
@@ -135,7 +132,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
     const awayMode: UponorAwayMode = await this.uponorProxy.getAwayMode();
     const awayUuid: string = this.api.hap.uuid.generate('away-mode-switch');
     const existingAwayAccessory: PlatformAccessory | undefined = this.cachedAccessories.find(
-      (accessory: PlatformAccessory): boolean => accessory.UUID === awayUuid,
+      (accessory: PlatformAccessory): boolean => accessory.UUID === awayUuid
     );
     if (existingAwayAccessory) {
       this.log.info('Restoring existing accessory from cache:', existingAwayAccessory.displayName);
@@ -146,15 +143,15 @@ export class UponorPlatform implements DynamicPlatformPlugin {
       createUponorAwaySwitchAccessory(
         this,
         existingAwayAccessory as PlatformAccessory<UponorAwayMode>,
-        thermostatAccessories as PlatformAccessory<UponorDevice>[],
+        thermostatAccessories as PlatformAccessory<UponorDevice>[]
       );
     } else {
-      this.log.info('Adding new accessory:', 'Modo vacaciones');
+      this.log.info('Adding new accessory:', 'Vacation Mode');
 
       const accessory: PlatformAccessory<UponorAwayMode> = new this.api.platformAccessory(
-        'Modo vacaciones',
+        'Vacation Mode',
         awayUuid,
-        Categories.SWITCH,
+        Categories.SWITCH
       );
 
       accessory.context = awayMode;
@@ -162,7 +159,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
       createUponorAwaySwitchAccessory(
         this,
         accessory,
-        thermostatAccessories as PlatformAccessory<UponorDevice>[],
+        thermostatAccessories as PlatformAccessory<UponorDevice>[]
       );
 
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);

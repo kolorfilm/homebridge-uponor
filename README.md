@@ -20,14 +20,14 @@ Configure the plugin via the Homebridge UI or manually in your `config.json`:
 
 ```json
 {
-    "platforms": [
-        {
-            "platform": "UponorPlatform",
-            "name": "Uponor",
-            "host": "192.168.1.100",
-            "refreshInterval": 60000
-        }
-    ]
+  "platforms": [
+    {
+      "platform": "UponorPlatform",
+      "name": "Uponor",
+      "host": "192.168.1.100",
+      "refreshInterval": 60000
+    }
+  ]
 }
 ```
 
@@ -52,6 +52,33 @@ This integration communicates with Uponor Smatrix Pulse communication module R-2
 
 - Uponor API doesn't support heat/cool switch for single thermostat. switch.uponor_cooling_mode change mode for entire system.
 - Uponor API does not support turn off action. When climate entity is turned off on Homebridge, the temperature is set to the minimum (default 5℃) when heating mode is active and to the maximum (default 35℃) when cooling mode is active.
+
+## Development
+
+### Testing
+
+The plugin includes unit tests using Vitest. To run the tests:
+
+```bash
+# Run tests once
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+### Building
+
+```bash
+# Build the plugin
+npm run build
+
+# Run linter
+npm run lint
+```
 
 ## Feedback
 

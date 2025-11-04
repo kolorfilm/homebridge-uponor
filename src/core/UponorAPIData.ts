@@ -54,7 +54,7 @@ export const createUponorAPIDataFromResponse = (response: UponorJNAPGetResponse)
     (acc: Record<string, string>, item: UponorJNAPVar): Record<string, string> => {
       return { ...acc, [item.waspVarName]: item.waspVarValue };
     },
-    {},
+    {}
   );
   return createUponorAPIData(data);
 };
@@ -112,8 +112,10 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
   };
 
   const isOn = (thermostat: string): boolean => {
-    return !((isCoolingEnabled() && getCurrentTemperature(thermostat).gte(getMaxLimit(thermostat)))
-      || (!isCoolingEnabled() && getCurrentTemperature(thermostat).lte(getMinLimit(thermostat))));
+    return !(
+      (isCoolingEnabled() && getCurrentTemperature(thermostat).gte(getMaxLimit(thermostat))) ||
+      (!isCoolingEnabled() && getCurrentTemperature(thermostat).lte(getMinLimit(thermostat)))
+    );
   };
 
   const getId = (thermostat: string): string => {
@@ -145,12 +147,20 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
     if (data[thermostat + '_eco_offset'] === '0') {
       return false;
     }
-    return (data[thermostat + '_stat_cb_comfort_eco_mode'] === '1')
-      || (data['cust_Temporary_ECO_Activation'] === '1');
+    return (
+      data[thermostat + '_stat_cb_comfort_eco_mode'] === '1' ||
+      data['cust_Temporary_ECO_Activation'] === '1'
+    );
   };
 
-  const getActiveSetbackTemperature = (thermostat: string, targetTemperature: BigNumber): BigNumber => {
-    if (targetTemperature === getMinLimit(thermostat) || targetTemperature === getMaxLimit(thermostat)) {
+  const getActiveSetbackTemperature = (
+    thermostat: string,
+    targetTemperature: BigNumber
+  ): BigNumber => {
+    if (
+      targetTemperature === getMinLimit(thermostat) ||
+      targetTemperature === getMaxLimit(thermostat)
+    ) {
       return BigNumber(0);
     }
 
@@ -186,10 +196,7 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
 
   const setTargetTemperature = (thermostat: string, temperature: BigNumber): BigNumber => {
     const setback: BigNumber = getActiveSetbackTemperature(thermostat, temperature);
-    const targetTemperature: BigNumber = temperature
-      .times(18)
-      .plus(setback)
-      .plus(320);
+    const targetTemperature: BigNumber = temperature.times(18).plus(setback).plus(320);
     data[thermostat + '_setpoint'] = targetTemperature.toFixed();
     return targetTemperature;
   };
