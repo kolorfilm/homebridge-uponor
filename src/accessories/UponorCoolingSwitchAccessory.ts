@@ -24,7 +24,7 @@ export const createUponorCoolingSwitchAccessory = (
     platform.Characteristic.On,
     accessory.context.isCoolingEnabled,
   );
-  service.setCharacteristic(platform.Characteristic.Name, 'Modo Frío');
+  service.setCharacteristic(platform.Characteristic.Name, 'Cold mode');
 
   // Setup characteristic handlers
   service.getCharacteristic(platform.Characteristic.On)

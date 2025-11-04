@@ -44,7 +44,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
     this.uponorProxy = createUponorProxy(
       this.log,
       this.config.host,
-      TemperatureDisplayUnit[this.config.displayUnit],
+      TemperatureDisplayUnit[this.config.displayUnit as keyof typeof TemperatureDisplayUnit],
     );
 
     this.api.on('didFinishLaunching', async (): Promise<void> => {
@@ -113,10 +113,10 @@ export class UponorPlatform implements DynamicPlatformPlugin {
         thermostatAccessories as PlatformAccessory<UponorDevice>[],
       );
     } else {
-      this.log.info('Adding new accessory:', 'Modo frío');
+      this.log.info('Adding new accessory:', 'Cold mode');
 
       const accessory: PlatformAccessory<UponorCoolingMode> = new this.api.platformAccessory(
-        'Modo frío',
+        'Cold mode',
         coolingUuid,
         Categories.SWITCH,
       );
