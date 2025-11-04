@@ -1,55 +1,55 @@
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
-import stylistic from '@stylistic/eslint-plugin';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import globals from 'globals';
+import vitestPlugin from '@vitest/eslint-plugin';
+import importPlugin from 'eslint-plugin-import';
 
 export default tseslint.config(
-  // Ignore patterns
-  {
-    ignores: ['dist/**'],
-  },
-  
-  // Base ESLint recommended config
   eslint.configs.recommended,
-  
-  // TypeScript ESLint recommended configs
   ...tseslint.configs.recommended,
-  
-  // Custom rules
+  eslintConfigPrettier,
   {
-    files: ['src/**/*.ts'],
+    files: ['**/*.{ts}'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        ecmaVersion: 2018,
+        ecmaVersion: 'latest',
         sourceType: 'module',
+      },
+      globals: {
+        ...globals.node,
+        ...globals.es2020,
+        ...vitestPlugin.environments.env.globals,
       },
     },
     plugins: {
       '@typescript-eslint': tseslint.plugin,
-      '@stylistic': stylistic,
+      import: importPlugin,
+      '@vitest': vitestPlugin,
     },
     rules: {
-      'quotes': ['warn', 'single'],
-      'indent': ['warn', 2, { 'SwitchCase': 1 }],
-      'semi': ['off'],
-      'comma-dangle': ['warn', 'always-multiline'],
-      'dot-notation': 'off',
-      'eqeqeq': 'warn',
-      'curly': ['warn', 'all'],
-      'brace-style': ['warn'],
-      'prefer-arrow-callback': ['warn'],
+      curly: 'error',
+      'object-curly-spacing': ['error', 'always'],
+      'object-shorthand': ['warn', 'properties'],
       'max-len': ['warn', 140],
       'no-console': ['warn'], // use the provided Homebridge log method instead
-      'comma-spacing': ['error'],
-      'no-multi-spaces': ['warn', { 'ignoreEOLComments': true }],
-      'no-trailing-spaces': ['warn'],
-      'lines-between-class-members': ['warn', 'always', { 'exceptAfterSingleLine': true }],
-      '@typescript-eslint/explicit-function-return-type': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@stylistic/semi': ['warn'],
-      '@stylistic/member-delimiter-style': ['warn'],
+      '@typescript-eslint/no-unused-vars': ['error'],
+      '@typescript-eslint/no-namespace': ['error', { allowDeclarations: true }],
+      'import/namespace': 'warn',
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', ['sibling', 'parent'], 'index'],
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true,
+          },
+        },
+      ],
     },
   },
+  {
+    ignores: ['dist/**'],
+  }
 );
-

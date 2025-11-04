@@ -1,26 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES2018", // ~node10
+    "target": "ES2020",
+    "lib": ["ES2020"],
     "module": "commonjs",
-    "lib": [
-      "es2015",
-      "es2016",
-      "es2017",
-      "es2018"
-    ],
+    "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,
     "esModuleInterop": true,
-    "noImplicitAny": false
+    "noImplicitAny": true,
+    "types": ["node", "vitest/globals"],
+    "moduleResolution": "node",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src/"
-  ],
-  "exclude": [
-    "**/*.spec.ts"
-  ]
+  "include": ["src/"]
 }

@@ -33,21 +33,22 @@ export interface UponorProxy {
 export const createUponorProxy = (
   log: Logger,
   host: string,
-  displayUnit: TemperatureDisplayUnit,
+  displayUnit: TemperatureDisplayUnit
 ): UponorProxy => {
   let lastUpdatedAt: Date | null = null;
   let uponorData: UponorAPIData | null = null;
   const mutex: Mutex = new Mutex();
   const uponorApi: UponorAPI = createUponorAPI(log, host);
 
-  const updateData = (): Promise<void> => mutex.runExclusive(async (): Promise<void> => {
-    if (lastUpdatedAt && (new Date().getTime() - lastUpdatedAt.getTime()) < EXPIRATION_TIME) {
-      return;
-    }
+  const updateData = (): Promise<void> =>
+    mutex.runExclusive(async (): Promise<void> => {
+      if (lastUpdatedAt && new Date().getTime() - lastUpdatedAt.getTime() < EXPIRATION_TIME) {
+        return;
+      }
 
-    uponorData = await uponorApi.getData();
-    lastUpdatedAt = new Date();
-  });
+      uponorData = await uponorApi.getData();
+      lastUpdatedAt = new Date();
+    });
 
   const toUponorCurrentHvacMode = (isOn: boolean, isCoolingEnabled: boolean): UponorDeviceState => {
     if (!isOn) {
@@ -91,7 +92,7 @@ export const createUponorProxy = (
         isEcoEnabled: uponorData!.isEcoEnabled(code),
         currentHvacMode: toUponorCurrentHvacMode(
           uponorData!.isOn(code),
-          uponorData!.isCoolingEnabled(),
+          uponorData!.isCoolingEnabled()
         ),
         currentTemperature: calculateCurrentTemperature(code),
         targetTemperature: calculateTargetTemperature(code),
@@ -114,10 +115,7 @@ export const createUponorProxy = (
 
   const getCurrentHeatingCoolingState = async (thermostat: string): Promise<UponorDeviceState> => {
     await updateData();
-    return toUponorCurrentHvacMode(
-      uponorData!.isOn(thermostat),
-      uponorData!.isCoolingEnabled(),
-    );
+    return toUponorCurrentHvacMode(uponorData!.isOn(thermostat), uponorData!.isCoolingEnabled());
   };
 
   const getCurrentTemperature = async (thermostat: string): Promise<BigNumber> => {
@@ -135,7 +133,10 @@ export const createUponorProxy = (
     return calculateTargetTemperature(thermostat);
   };
 
-  const setTargetTemperature = async (thermostat: string, targetTemperature: BigNumber): Promise<void> => {
+  const setTargetTemperature = async (
+    thermostat: string,
+    targetTemperature: BigNumber
+  ): Promise<void> => {
     uponorData!.setTargetTemperature(thermostat, targetTemperature);
     await uponorApi.setData(uponorData!.toSetTargetTemperaturePayload(thermostat));
     await updateData();

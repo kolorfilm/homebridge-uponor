@@ -8,18 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.0-beta.0] - 2025-11-04
 
 ### Added
+
 - Humidity display for thermostats (CurrentRelativeHumidity characteristic)
 
 ### Changed
+
 - Refactored from class-based to functional components architecture
 
 ### Fixed
+
 - Model characteristic warning by providing 'Uponor Smatrix' as fallback value
 - Resolved Homebridge warnings: 'characteristic value expected string and received undefined'
 
 ## [1.1.1-beta.0] - 2025-11-03
 
 ### Changed
+
 - Updated Node.js engine requirement to v22/v24 (dropped support for older versions)
 - Updated Homebridge dependency to v1.11.1
 - Updated all npm dependencies to their latest versions:
@@ -33,11 +37,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved package.json metadata (description, keywords)
 
 ### Added
+
 - Comprehensive README with installation and configuration instructions
 - This CHANGELOG file to track version history
 - Better documentation for fork status and maintenance
 
 ### Fixed
+
 - Compatibility with current Node.js and Homebridge versions
 - Security vulnerabilities through dependency updates
 
@@ -48,4 +54,3 @@ This is a fork and continuation of the original [homebridge-plugin-uponor](https
 ## [Earlier Versions]
 
 For the history of earlier versions, please refer to the [original repository](https://github.com/alexmobo/homebridge-plugin-uponor).
-
