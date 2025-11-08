@@ -43,39 +43,53 @@ export const createUponorThermostatAccessory = (
     platform.Characteristic.TargetHeatingCoolingState,
     platform.Characteristic.TargetHeatingCoolingState.AUTO
   );
-  service.getCharacteristic(platform.Characteristic.CurrentTemperature).setProps({
-    minValue: accessory.context.minLimitTemperature.toNumber(),
-    maxValue: accessory.context.maxLimitTemperature.toNumber(),
-  });
-  service.setCharacteristic(
-    platform.Characteristic.CurrentTemperature,
-    accessory.context.currentTemperature.toNumber()
-  );
-  service.getCharacteristic(platform.Characteristic.TargetTemperature).setProps({
-    minValue: accessory.context.minLimitTemperature.toNumber(),
-    maxValue: accessory.context.maxLimitTemperature.toNumber(),
-    minStep: 0.5,
-  });
-  service.setCharacteristic(
-    platform.Characteristic.TargetTemperature,
-    accessory.context.targetTemperature.toNumber()
-  );
+
+  // Validate and set temperature values
+  const minTemp = accessory.context.minLimitTemperature?.toNumber();
+  const maxTemp = accessory.context.maxLimitTemperature?.toNumber();
+  const currentTemp = accessory.context.currentTemperature?.toNumber();
+  const targetTemp = accessory.context.targetTemperature?.toNumber();
+  const humidity = accessory.context.currentHumidity?.toNumber();
+
+  if (minTemp !== undefined && !isNaN(minTemp) && maxTemp !== undefined && !isNaN(maxTemp)) {
+    service.getCharacteristic(platform.Characteristic.CurrentTemperature).setProps({
+      minValue: minTemp,
+      maxValue: maxTemp,
+    });
+    service.getCharacteristic(platform.Characteristic.TargetTemperature).setProps({
+      minValue: minTemp,
+      maxValue: maxTemp,
+      minStep: 0.5,
+    });
+  }
+
+  if (currentTemp !== undefined && !isNaN(currentTemp)) {
+    service.setCharacteristic(platform.Characteristic.CurrentTemperature, currentTemp);
+  }
+
+  if (targetTemp !== undefined && !isNaN(targetTemp)) {
+    service.setCharacteristic(platform.Characteristic.TargetTemperature, targetTemp);
+  }
+
   service.setCharacteristic(
     platform.Characteristic.TemperatureDisplayUnits,
     platform.config.displayUnit === 'CELSIUS'
       ? platform.Characteristic.TemperatureDisplayUnits.CELSIUS
       : platform.Characteristic.TemperatureDisplayUnits.FAHRENHEIT
   );
+
   service.getCharacteristic(platform.Characteristic.CurrentRelativeHumidity).setProps({
     minValue: 0,
     maxValue: 100,
   });
-  service.setCharacteristic(
-    platform.Characteristic.CurrentRelativeHumidity,
-    accessory.context.currentHumidity.toNumber()
-  );
 
-  service.setCharacteristic(platform.Characteristic.Name, accessory.context.name);
+  if (humidity !== undefined && !isNaN(humidity)) {
+    service.setCharacteristic(platform.Characteristic.CurrentRelativeHumidity, humidity);
+  }
+
+  if (accessory.context.name) {
+    service.setCharacteristic(platform.Characteristic.Name, accessory.context.name);
+  }
 
   // Setup characteristic handlers
   service

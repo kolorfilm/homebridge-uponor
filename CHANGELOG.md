@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1-beta.0] - 2025-11-08
+
+### Fixed
+
+- Fixed "NaN" temperature warnings by adding validation before setting characteristic values
+- Fixed "undefined" name warnings by checking if name exists before setting characteristic
+- Improved accessory initialization to handle invalid or missing cached data gracefully
+
 ## [1.2.0] - 2025-11-04
 
 ### Added
