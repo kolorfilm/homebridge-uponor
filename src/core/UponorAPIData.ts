@@ -94,21 +94,27 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
   };
 
   const getCurrentTemperature = (thermostat: string): BigNumber => {
-    return BigNumber(data[thermostat + '_room_temperature'])
-      .minus(320)
-      .div(18);
+    const rawValue = data[thermostat + '_room_temperature'];
+    if (!rawValue || rawValue === 'undefined') {
+      return BigNumber(0);
+    }
+    return BigNumber(rawValue).minus(320).div(18);
   };
 
   const getMinLimit = (thermostat: string): BigNumber => {
-    return BigNumber(data[thermostat + '_minimum_setpoint'])
-      .minus(320)
-      .div(18);
+    const rawValue = data[thermostat + '_minimum_setpoint'];
+    if (!rawValue || rawValue === 'undefined') {
+      return BigNumber(5); // Default minimum 5°C
+    }
+    return BigNumber(rawValue).minus(320).div(18);
   };
 
   const getMaxLimit = (thermostat: string): BigNumber => {
-    return BigNumber(data[thermostat + '_maximum_setpoint'])
-      .minus(320)
-      .div(18);
+    const rawValue = data[thermostat + '_maximum_setpoint'];
+    if (!rawValue || rawValue === 'undefined') {
+      return BigNumber(30); // Default maximum 30°C
+    }
+    return BigNumber(rawValue).minus(320).div(18);
   };
 
   const isOn = (thermostat: string): boolean => {
@@ -123,7 +129,8 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
   };
 
   const getName = (thermostat: string): string => {
-    return data['cust_' + thermostat + '_name'];
+    const name = data['cust_' + thermostat + '_name'];
+    return name || 'Uponor Thermostat';
   };
 
   const getModel = (): string => {
@@ -164,15 +171,18 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
       return BigNumber(0);
     }
 
-    const cool_setback: BigNumber = isCoolingEnabled()
-      ? BigNumber(data['sys_heat_cool_offset']).negated()
-      : BigNumber(0);
+    const coolOffsetValue = data['sys_heat_cool_offset'];
+    const cool_setback: BigNumber =
+      isCoolingEnabled() && coolOffsetValue ? BigNumber(coolOffsetValue).negated() : BigNumber(0);
 
     let eco_setback: BigNumber = BigNumber(0);
     if (isEcoEnabled(thermostat) || isAwayEnabled()) {
-      eco_setback = BigNumber(data[thermostat + '_eco_offset']);
-      if (isCoolingEnabled()) {
-        eco_setback = eco_setback.negated();
+      const ecoOffsetValue = data[thermostat + '_eco_offset'];
+      if (ecoOffsetValue) {
+        eco_setback = BigNumber(ecoOffsetValue);
+        if (isCoolingEnabled()) {
+          eco_setback = eco_setback.negated();
+        }
       }
     }
 
@@ -180,13 +190,17 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
   };
 
   const getTargetTemperature = (thermostat: string): BigNumber => {
-    const temperature: BigNumber = BigNumber(data[thermostat + '_setpoint'])
+    const rawValue = data[thermostat + '_setpoint'];
+    if (!rawValue || rawValue === 'undefined') {
+      return BigNumber(21); // Default target temperature 21°C
+    }
+    const temperature: BigNumber = BigNumber(rawValue)
       .minus(320)
       .div(1.8)
       .dp(0, BigNumber.ROUND_FLOOR)
       .div(10);
     const setback: BigNumber = getActiveSetbackTemperature(thermostat, temperature);
-    return BigNumber(data[thermostat + '_setpoint'])
+    return BigNumber(rawValue)
       .minus(setback)
       .minus(320)
       .div(1.8)

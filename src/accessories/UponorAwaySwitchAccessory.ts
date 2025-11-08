@@ -27,7 +27,14 @@ export const createUponorAwaySwitchAccessory = (
   // Setup characteristic handlers
   service
     .getCharacteristic(platform.Characteristic.On)
-    .onGet((): Promise<boolean> => platform.uponorProxy.isAwayEnabled())
+    .onGet(async (): Promise<boolean> => {
+      try {
+        return await platform.uponorProxy.isAwayEnabled();
+      } catch (error) {
+        platform.log.error('Error getting away mode status:', error);
+        return accessory.context.isAwayEnabled;
+      }
+    })
     .onSet(async (value: CharacteristicValue): Promise<void> => {
       const isAwayEnabled: boolean = value as boolean;
 

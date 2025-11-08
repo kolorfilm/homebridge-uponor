@@ -8,7 +8,7 @@ import { TemperatureDisplayUnit } from '../settings';
 import { UponorCoolingMode } from '../devices/UponorCoolingMode';
 import { UponorAwayMode } from '../devices/UponorAwayMode';
 
-const EXPIRATION_TIME = 1000;
+const EXPIRATION_TIME = 5000;
 
 export interface UponorProxy {
   getDevices: () => Promise<UponorDevice[]>;
@@ -166,6 +166,7 @@ export const createUponorProxy = (
   };
 
   const isOn = async (thermostat: string): Promise<boolean> => {
+    await updateData();
     return uponorData!.isOn(thermostat);
   };
 

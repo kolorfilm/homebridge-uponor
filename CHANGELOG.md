@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1-beta.2] - 2025-11-08
+
+### Fixed
+
+- Fixed slow/non-responding read handlers that caused "This plugin slows down Homebridge" warnings
+- Added comprehensive error handling to all characteristic handlers (CurrentHeatingCoolingState, CurrentTemperature, TargetTemperature, CurrentRelativeHumidity, Name)
+- Improved handling of API connection errors (ECONNRESET, ETIMEDOUT, ECONNREFUSED)
+- Added validation for all temperature and humidity values to prevent NaN values
+- Added default fallback values when API data is unavailable
+- Fixed missing `await updateData()` in `isOn()` method
+- Improved error messages for better debugging
+
+### Changed
+
+- Increased cache time from 1 second to 5 seconds to reduce API load
+- Added 5-second timeout to all API calls
+- Enhanced `UponorAPIData` with better validation and default values
+- All characteristic handlers now return cached values on error instead of failing
+
 ## [1.2.1-beta.1] - 2025-11-08
 
 ### Added

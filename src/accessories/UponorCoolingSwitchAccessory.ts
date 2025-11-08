@@ -27,7 +27,14 @@ export const createUponorCoolingSwitchAccessory = (
   // Setup characteristic handlers
   service
     .getCharacteristic(platform.Characteristic.On)
-    .onGet((): Promise<boolean> => platform.uponorProxy.isCoolingEnabled())
+    .onGet(async (): Promise<boolean> => {
+      try {
+        return await platform.uponorProxy.isCoolingEnabled();
+      } catch (error) {
+        platform.log.error('Error getting cooling mode status:', error);
+        return accessory.context.isCoolingEnabled;
+      }
+    })
     .onSet(async (value: CharacteristicValue): Promise<void> => {
       const isCoolingEnabled: boolean = value as boolean;
 
