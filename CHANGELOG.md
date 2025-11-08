@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1-beta.1] - 2025-11-08
+
+### Added
+
+- GitHub Actions workflows for automated CI/CD
+
+### Changed
+
+- Updated README.md with correct configuration properties and installation instructions
+- Updated dependencies:
+  - `axios` from 1.13.1 to 1.13.2
+  - `@vitest/coverage-v8` from 4.0.7 to 4.0.8
+  - `@vitest/eslint-plugin` from 1.4.0 to 1.4.1
+  - `vitest` from 4.0.7 to 4.0.8
+
 ## [1.2.1-beta.0] - 2025-11-08
 
 ### Fixed
