@@ -1,6 +1,6 @@
 {
   "name": "homebridge-uponor",
-  "version": "1.2.1-beta.2",
+  "version": "1.2.1-beta.3",
   "author": "Michael Päßler",
   "displayName": "Homebridge Uponor",
   "description": "Homebridge plugin for Uponor underfloor heating and cooling systems",

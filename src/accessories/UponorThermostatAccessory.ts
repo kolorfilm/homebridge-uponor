@@ -3,6 +3,12 @@ import { UponorPlatform } from '../platform';
 import { MANUFACTURER } from '../devices/const';
 import { UponorDevice, UponorDeviceState } from '../devices/UponorDevice';
 import BigNumber from 'bignumber.js';
+import {
+  createCachedGetter,
+  isValidNumber,
+  isValidString,
+  isValueInBounds,
+} from './AccessoryHelpers';
 
 const toCurrentHeatingCoolingState = (
   platform: UponorPlatform,
@@ -50,7 +56,9 @@ export const createUponorThermostatAccessory = (
   const currentTemp = accessory.context.currentTemperature?.toNumber();
   const targetTemp = accessory.context.targetTemperature?.toNumber();
   const humidity = accessory.context.currentHumidity?.toNumber();
+  const deviceName = accessory.context.name || accessory.context.code;
 
+  // Set temperature props if min/max are valid
   if (minTemp !== undefined && !isNaN(minTemp) && maxTemp !== undefined && !isNaN(maxTemp)) {
     service.getCharacteristic(platform.Characteristic.CurrentTemperature).setProps({
       minValue: minTemp,
@@ -63,12 +71,22 @@ export const createUponorThermostatAccessory = (
     });
   }
 
-  if (currentTemp !== undefined && !isNaN(currentTemp)) {
-    service.setCharacteristic(platform.Characteristic.CurrentTemperature, currentTemp);
+  // Set current temperature only if within valid bounds
+  if (isValueInBounds(currentTemp, minTemp, maxTemp)) {
+    service.setCharacteristic(platform.Characteristic.CurrentTemperature, currentTemp!);
+  } else if (currentTemp !== undefined && !isNaN(currentTemp)) {
+    platform.log.warn(
+      `[${deviceName}] Ignoring invalid current temperature: ${currentTemp}°C (valid range: ${minTemp}-${maxTemp}°C)`
+    );
   }
 
-  if (targetTemp !== undefined && !isNaN(targetTemp)) {
-    service.setCharacteristic(platform.Characteristic.TargetTemperature, targetTemp);
+  // Set target temperature only if within valid bounds
+  if (isValueInBounds(targetTemp, minTemp, maxTemp)) {
+    service.setCharacteristic(platform.Characteristic.TargetTemperature, targetTemp!);
+  } else if (targetTemp !== undefined && !isNaN(targetTemp)) {
+    platform.log.warn(
+      `[${deviceName}] Ignoring invalid target temperature: ${targetTemp}°C (valid range: ${minTemp}-${maxTemp}°C)`
+    );
   }
 
   service.setCharacteristic(
@@ -83,8 +101,13 @@ export const createUponorThermostatAccessory = (
     maxValue: 100,
   });
 
-  if (humidity !== undefined && !isNaN(humidity)) {
-    service.setCharacteristic(platform.Characteristic.CurrentRelativeHumidity, humidity);
+  // Set humidity only if within valid bounds
+  if (isValueInBounds(humidity, 0, 100)) {
+    service.setCharacteristic(platform.Characteristic.CurrentRelativeHumidity, humidity!);
+  } else if (humidity !== undefined && !isNaN(humidity)) {
+    platform.log.warn(
+      `[${deviceName}] Ignoring invalid humidity: ${humidity}% (valid range: 0-100%)`
+    );
   }
 
   if (accessory.context.name) {
@@ -92,123 +115,56 @@ export const createUponorThermostatAccessory = (
   }
 
   // Setup characteristic handlers
+  // All handlers return cached values that are updated by background polling
   service
     .getCharacteristic(platform.Characteristic.CurrentHeatingCoolingState)
-    .onGet(async (): Promise<CharacteristicValue> => {
-      try {
-        const state: UponorDeviceState = await platform.uponorProxy.getCurrentHeatingCoolingState(
-          accessory.context.code
-        );
-        accessory.context.currentHvacMode = state;
-        return toCurrentHeatingCoolingState(platform, state);
-      } catch (error) {
-        platform.log.error('Error getting current heating cooling state:', error);
-        // Return cached value or default
-        return toCurrentHeatingCoolingState(platform, accessory.context.currentHvacMode);
-      }
+    .onGet((): CharacteristicValue => {
+      return toCurrentHeatingCoolingState(platform, accessory.context.currentHvacMode);
     });
 
-  service
-    .getCharacteristic(platform.Characteristic.CurrentTemperature)
-    .onGet(async (): Promise<CharacteristicValue> => {
-      try {
-        const currentTemperature: BigNumber = await platform.uponorProxy.getCurrentTemperature(
-          accessory.context.code
-        );
-        const tempValue = currentTemperature.toNumber();
+  service.getCharacteristic(platform.Characteristic.CurrentTemperature).onGet(
+    createCachedGetter(
+      () => accessory.context.currentTemperature?.toNumber(),
+      20, // Default to 20°C
+      isValidNumber
+    )
+  );
 
-        // Validate the temperature value
-        if (isNaN(tempValue) || !isFinite(tempValue)) {
-          platform.log.warn('Invalid current temperature received, using cached value');
-          return accessory.context.currentTemperature?.toNumber() || 20; // Default to 20°C
-        }
-
-        accessory.context.currentTemperature = currentTemperature;
-        accessory.context.isOn = await platform.uponorProxy.isOn(accessory.context.code);
-        return tempValue;
-      } catch (error) {
-        platform.log.error('Error getting current temperature:', error);
-        // Return cached value or default
-        return accessory.context.currentTemperature?.toNumber() || 20;
-      }
-    });
-
-  service
-    .getCharacteristic(platform.Characteristic.CurrentRelativeHumidity)
-    .onGet(async (): Promise<CharacteristicValue> => {
-      try {
-        const currentHumidity: BigNumber = await platform.uponorProxy.getHumidity(
-          accessory.context.code
-        );
-        const humidityValue = currentHumidity.toNumber();
-
-        // Validate the humidity value
-        if (isNaN(humidityValue) || !isFinite(humidityValue)) {
-          platform.log.warn('Invalid humidity received, using cached value');
-          return accessory.context.currentHumidity?.toNumber() || 50; // Default to 50%
-        }
-
-        accessory.context.currentHumidity = currentHumidity;
-        return humidityValue;
-      } catch (error) {
-        platform.log.error('Error getting humidity:', error);
-        // Return cached value or default
-        return accessory.context.currentHumidity?.toNumber() || 50;
-      }
-    });
+  service.getCharacteristic(platform.Characteristic.CurrentRelativeHumidity).onGet(
+    createCachedGetter(
+      () => accessory.context.currentHumidity?.toNumber(),
+      50, // Default to 50%
+      isValidNumber
+    )
+  );
 
   service
     .getCharacteristic(platform.Characteristic.TargetTemperature)
-    .onGet(async (): Promise<CharacteristicValue> => {
-      try {
-        const targetTemperature: BigNumber = await platform.uponorProxy.getTargetTemperature(
-          accessory.context.code
-        );
-        const tempValue = targetTemperature.toNumber();
-
-        // Validate the temperature value
-        if (isNaN(tempValue) || !isFinite(tempValue)) {
-          platform.log.warn('Invalid target temperature received, using cached value');
-          return accessory.context.targetTemperature?.toNumber() || 21; // Default to 21°C
-        }
-
-        accessory.context.targetTemperature = targetTemperature;
-        return tempValue;
-      } catch (error) {
-        platform.log.error('Error getting target temperature:', error);
-        // Return cached value or default
-        return accessory.context.targetTemperature?.toNumber() || 21;
-      }
-    })
+    .onGet(
+      createCachedGetter(
+        () => accessory.context.targetTemperature?.toNumber(),
+        21, // Default to 21°C
+        isValidNumber
+      )
+    )
     .onSet(async (value: CharacteristicValue): Promise<void> => {
       try {
         const targetTemperature: BigNumber = BigNumber(value as number);
+        platform.log.info(
+          `[${deviceName}] Setting target temperature to ${targetTemperature.toNumber()}°C`
+        );
         await platform.uponorProxy.setTargetTemperature(accessory.context.code, targetTemperature);
         accessory.context.targetTemperature = targetTemperature;
+        platform.log.info(
+          `[${deviceName}] Successfully set target temperature to ${targetTemperature.toNumber()}°C`
+        );
       } catch (error) {
-        platform.log.error('Error setting target temperature:', error);
+        platform.log.error(`[${deviceName}] Error setting target temperature:`, error);
         throw error;
       }
     });
 
   service
     .getCharacteristic(platform.Characteristic.Name)
-    .onGet(async (): Promise<CharacteristicValue> => {
-      try {
-        const name: string = await platform.uponorProxy.getName(accessory.context.code);
-
-        // Validate the name
-        if (!name || name === 'undefined') {
-          platform.log.warn('Invalid name received, using cached value');
-          return accessory.context.name || 'Uponor Thermostat';
-        }
-
-        accessory.context.name = name;
-        return name;
-      } catch (error) {
-        platform.log.error('Error getting name:', error);
-        // Return cached value or default
-        return accessory.context.name || 'Uponor Thermostat';
-      }
-    });
+    .onGet(createCachedGetter(() => accessory.context.name, 'Uponor Thermostat', isValidString));
 };

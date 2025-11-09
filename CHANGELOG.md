@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1-beta.3] - 2025-11-09
+
+### Added
+
+- **Background polling system**: Accessories are now updated automatically every 10 seconds via background polling
+- **Cached values**: All `onGet` handlers now return cached values synchronously (no blocking API calls)
+- **Proactive HomeKit updates**: Using `updateValue()` to push updates to HomeKit when values change
+- **Comprehensive logging**: All `onSet` handlers now log their actions to the Homebridge console
+- **AccessoryHelpers module**: Reusable utility functions for accessory development
+- **Comprehensive test suite**: Test files covering all accessories and core modules
+
+### Changed
+
+- **Performance optimization**: All characteristic handlers are now non-blocking and return immediately from cache
+- **Improved validation**: Characteristic values are validated against their bounds before being set
+- **Better error logging**: Invalid values (e.g., temperatures out of range) are logged with helpful messages
+- **TypeScript improvements**: `UponorDevice` type now correctly specifies `undefined` for optional properties
+- **Code deduplication**:
+  - `adjustThermostatTemperature()` function is now shared between Away and Cooling mode switches
+  - Unified error handling in `UponorAPI.ts`
+
+### Fixed
+
+- **"characteristic was supplied illegal value" errors**: Values are now validated before being set to characteristics
+- **Temperature validation**: Values like 0°C that fall below the minimum limit (e.g., 5°C) are properly rejected and logged
+- **Performance warnings**: Eliminated "This plugin slows down Homebridge" warnings by removing blocking API calls from handlers
+- **Humidity validation**: Values outside the 0-100% range are now properly validated and logged
+
 ## [1.2.1-beta.2] - 2025-11-08
 
 ### Fixed

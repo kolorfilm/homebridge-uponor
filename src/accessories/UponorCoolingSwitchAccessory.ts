@@ -3,7 +3,7 @@ import { UponorPlatform } from '../platform';
 import { UponorCoolingMode } from '../devices/UponorCoolingMode';
 import { MANUFACTURER } from '../devices/const';
 import { UponorDevice } from '../devices/UponorDevice';
-import BigNumber from 'bignumber.js';
+import { adjustThermostatTemperature } from './AccessoryHelpers';
 
 export const createUponorCoolingSwitchAccessory = (
   platform: UponorPlatform,
@@ -25,50 +25,25 @@ export const createUponorCoolingSwitchAccessory = (
   service.setCharacteristic(platform.Characteristic.Name, 'Cold mode');
 
   // Setup characteristic handlers
+  // Handler returns cached value that is updated by background polling
   service
     .getCharacteristic(platform.Characteristic.On)
-    .onGet(async (): Promise<boolean> => {
-      try {
-        return await platform.uponorProxy.isCoolingEnabled();
-      } catch (error) {
-        platform.log.error('Error getting cooling mode status:', error);
-        return accessory.context.isCoolingEnabled;
-      }
+    .onGet((): boolean => {
+      return accessory.context.isCoolingEnabled;
     })
     .onSet(async (value: CharacteristicValue): Promise<void> => {
       const isCoolingEnabled: boolean = value as boolean;
+      platform.log.info(`[Cold mode] ${isCoolingEnabled ? 'Enabling' : 'Disabling'} cooling mode`);
 
+      // Adjust all thermostats' temperatures if needed
       for (const thermostatAccessory of thermostatAccessories) {
-        if (isCoolingEnabled) {
-          const targetTemperature: BigNumber = await platform.uponorProxy.getTargetTemperature(
-            thermostatAccessory.context.code
-          );
-          const minLimitTemperature: BigNumber = platform.uponorProxy.getMinLimitTemperature(
-            thermostatAccessory.context.code
-          );
-          if (targetTemperature === minLimitTemperature) {
-            await platform.uponorProxy.setTargetTemperature(
-              thermostatAccessory.context.code,
-              platform.uponorProxy.getMaxLimitTemperature(thermostatAccessory.context.code)
-            );
-          }
-        } else {
-          const targetTemperature: BigNumber = await platform.uponorProxy.getTargetTemperature(
-            thermostatAccessory.context.code
-          );
-          const maxLimitTemperature: BigNumber = platform.uponorProxy.getMaxLimitTemperature(
-            thermostatAccessory.context.code
-          );
-          if (targetTemperature === maxLimitTemperature) {
-            await platform.uponorProxy.setTargetTemperature(
-              thermostatAccessory.context.code,
-              platform.uponorProxy.getMinLimitTemperature(thermostatAccessory.context.code)
-            );
-          }
-        }
+        await adjustThermostatTemperature(platform, thermostatAccessory, isCoolingEnabled);
       }
 
       await platform.uponorProxy.setCoolingMode(isCoolingEnabled);
       accessory.context.isCoolingEnabled = isCoolingEnabled;
+      platform.log.info(
+        `[Cold mode] Successfully ${isCoolingEnabled ? 'enabled' : 'disabled'} cooling mode`
+      );
     });
 };

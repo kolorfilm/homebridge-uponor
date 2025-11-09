@@ -23,6 +23,39 @@ export interface UponorAPI {
 export const createUponorAPI = (log: Logger, host: string): UponorAPI => {
   const endpoint = `http://${host}/JNAP/`;
 
+  const handleApiError = (error: unknown, operation: 'get' | 'set'): void => {
+    const operationText = operation === 'get' ? 'getting data from' : 'setting data to';
+    const operationContext = operation === 'get' ? '' : ' while setting data';
+
+    if (!(error instanceof Error)) {
+      log.error(`Error ${operationText} Uponor API:`, error);
+      return;
+    }
+
+    if ('code' in error && error.code === 'ECONNRESET') {
+      log.warn(
+        `Connection reset by Uponor API${operationContext} - the device may be busy${operation === 'get' ? ' or temporarily unavailable' : ''}`
+      );
+      return;
+    }
+
+    if ('code' in error && error.code === 'ECONNREFUSED') {
+      log.error(
+        `Connection refused by Uponor API - check if the device is online${operation === 'get' ? ' and the IP address is correct' : ''}`
+      );
+      return;
+    }
+
+    if ('code' in error && error.code === 'ETIMEDOUT') {
+      log.warn(
+        `Connection to Uponor API timed out${operationContext}${operation === 'get' ? ' - the device may be slow or unreachable' : ''}`
+      );
+      return;
+    }
+
+    log.error(`Error ${operationText} Uponor API:`, error.message);
+  };
+
   const getData = async (): Promise<UponorAPIData> => {
     try {
       const result: AxiosResponse<UponorJNAPGetResponse> = await axios<UponorJNAPGetResponse>({
@@ -36,24 +69,8 @@ export const createUponorAPI = (log: Logger, host: string): UponorAPI => {
         log.error('Error response from Uponor API:', result.data);
       }
       return createUponorAPIDataFromResponse(result.data);
-    } catch (e) {
-      if (e instanceof Error) {
-        if ('code' in e && e.code === 'ECONNRESET') {
-          log.warn(
-            'Connection reset by Uponor API - the device may be busy or temporarily unavailable'
-          );
-        } else if ('code' in e && e.code === 'ECONNREFUSED') {
-          log.error(
-            'Connection refused by Uponor API - check if the device is online and the IP address is correct'
-          );
-        } else if ('code' in e && e.code === 'ETIMEDOUT') {
-          log.warn('Connection to Uponor API timed out - the device may be slow or unreachable');
-        } else {
-          log.error('Error getting data from Uponor API:', e.message);
-        }
-      } else {
-        log.error('Error getting data from Uponor API:', e);
-      }
+    } catch (error) {
+      handleApiError(error, 'get');
       return createEmptyUponorAPIData();
     }
   };
@@ -70,20 +87,8 @@ export const createUponorAPI = (log: Logger, host: string): UponorAPI => {
       if (result.data.result !== 'OK') {
         log.error('Error response from Uponor API:', result.data);
       }
-    } catch (e) {
-      if (e instanceof Error) {
-        if ('code' in e && e.code === 'ECONNRESET') {
-          log.warn('Connection reset by Uponor API while setting data - the device may be busy');
-        } else if ('code' in e && e.code === 'ECONNREFUSED') {
-          log.error('Connection refused by Uponor API - check if the device is online');
-        } else if ('code' in e && e.code === 'ETIMEDOUT') {
-          log.warn('Connection to Uponor API timed out while setting data');
-        } else {
-          log.error('Error setting data to Uponor API:', e.message);
-        }
-      } else {
-        log.error('Error setting data to Uponor API:', e);
-      }
+    } catch (error) {
+      handleApiError(error, 'set');
     }
   };
 

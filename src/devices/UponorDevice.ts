@@ -3,17 +3,17 @@ import BigNumber from 'bignumber.js';
 export type UponorDevice = {
   id: string;
   code: string;
-  name: string;
+  name: string | undefined;
   model: string;
   version: string;
   isOn: boolean;
   isEcoEnabled: boolean;
   currentHvacMode: UponorDeviceState;
-  currentTemperature: BigNumber;
-  targetTemperature: BigNumber;
-  minLimitTemperature: BigNumber;
-  maxLimitTemperature: BigNumber;
-  currentHumidity: BigNumber;
+  currentTemperature: BigNumber | undefined;
+  targetTemperature: BigNumber | undefined;
+  minLimitTemperature: BigNumber | undefined;
+  maxLimitTemperature: BigNumber | undefined;
+  currentHumidity: BigNumber | undefined;
 };
 
 export enum UponorDeviceState {

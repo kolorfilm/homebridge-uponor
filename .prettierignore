@@ -1,7 +1,7 @@
 # Ignore artifacts:
 dist
 package-lock.json
-frontend/coverage
+coverage
 
 # Prettier is unable to infer a parser for Bash scripts
 **/*.sh

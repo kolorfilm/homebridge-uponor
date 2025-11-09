@@ -2,8 +2,8 @@ import { CharacteristicValue, PlatformAccessory, Service } from 'homebridge';
 import { UponorPlatform } from '../platform';
 import { MANUFACTURER } from '../devices/const';
 import { UponorDevice } from '../devices/UponorDevice';
-import BigNumber from 'bignumber.js';
 import { UponorAwayMode } from '../devices/UponorAwayMode';
+import { adjustThermostatTemperature } from './AccessoryHelpers';
 
 export const createUponorAwaySwitchAccessory = (
   platform: UponorPlatform,
@@ -25,50 +25,25 @@ export const createUponorAwaySwitchAccessory = (
   service.setCharacteristic(platform.Characteristic.Name, 'Vacation Mode');
 
   // Setup characteristic handlers
+  // Handler returns cached value that is updated by background polling
   service
     .getCharacteristic(platform.Characteristic.On)
-    .onGet(async (): Promise<boolean> => {
-      try {
-        return await platform.uponorProxy.isAwayEnabled();
-      } catch (error) {
-        platform.log.error('Error getting away mode status:', error);
-        return accessory.context.isAwayEnabled;
-      }
+    .onGet((): boolean => {
+      return accessory.context.isAwayEnabled;
     })
     .onSet(async (value: CharacteristicValue): Promise<void> => {
       const isAwayEnabled: boolean = value as boolean;
+      platform.log.info(`[Vacation Mode] ${isAwayEnabled ? 'Enabling' : 'Disabling'} away mode`);
 
+      // Adjust all thermostats' temperatures if needed
       for (const thermostatAccessory of thermostatAccessories) {
-        if (isAwayEnabled) {
-          const targetTemperature: BigNumber = await platform.uponorProxy.getTargetTemperature(
-            thermostatAccessory.context.code
-          );
-          const minLimitTemperature: BigNumber = platform.uponorProxy.getMinLimitTemperature(
-            thermostatAccessory.context.code
-          );
-          if (targetTemperature === minLimitTemperature) {
-            await platform.uponorProxy.setTargetTemperature(
-              thermostatAccessory.context.code,
-              platform.uponorProxy.getMaxLimitTemperature(thermostatAccessory.context.code)
-            );
-          }
-        } else {
-          const targetTemperature: BigNumber = await platform.uponorProxy.getTargetTemperature(
-            thermostatAccessory.context.code
-          );
-          const maxLimitTemperature: BigNumber = platform.uponorProxy.getMaxLimitTemperature(
-            thermostatAccessory.context.code
-          );
-          if (targetTemperature === maxLimitTemperature) {
-            await platform.uponorProxy.setTargetTemperature(
-              thermostatAccessory.context.code,
-              platform.uponorProxy.getMinLimitTemperature(thermostatAccessory.context.code)
-            );
-          }
-        }
+        await adjustThermostatTemperature(platform, thermostatAccessory, isAwayEnabled);
       }
 
       await platform.uponorProxy.setAwayMode(isAwayEnabled);
       accessory.context.isAwayEnabled = isAwayEnabled;
+      platform.log.info(
+        `[Vacation Mode] Successfully ${isAwayEnabled ? 'enabled' : 'disabled'} away mode`
+      );
     });
 };

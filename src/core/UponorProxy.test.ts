@@ -130,8 +130,8 @@ describe('UponorProxy', () => {
       expect(device.version).toBe('1.0.0');
       expect(device.isOn).toBe(true);
       expect(device.isEcoEnabled).toBe(false);
-      expect(device.currentTemperature.toNumber()).toBe(20);
-      expect(device.targetTemperature.toNumber()).toBe(22);
+      expect(device.currentTemperature?.toNumber()).toBe(20);
+      expect(device.targetTemperature?.toNumber()).toBe(22);
     });
 
     it('should set correct HVAC mode when device is on and heating', async () => {
