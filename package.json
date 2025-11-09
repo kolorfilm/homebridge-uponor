@@ -1,0 +1,59 @@
+{
+  "displayName": "Uponor Plugin",
+  "author": "Michael Päßler",
+  "name": "homebridge-uponor",
+  "version": "1.1.1-beta.0",
+  "description": "Homebridge plugin for Uponor underfloor heating and cooling systems",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kolorfilm/homebridge-uponor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kolorfilm/homebridge-uponor/issues"
+  },
+  "engines": {
+    "node": "^24||^22",
+    "homebridge": "^1.11.1"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "config.schema.json",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "lint": "eslint src/**.ts --max-warnings=0",
+    "watch": "npm run build && npm link && nodemon",
+    "build": "rimraf ./dist && tsc",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "uponor",
+    "heating",
+    "cooling",
+    "thermostat",
+    "underfloor-heating",
+    "smart-home"
+  ],
+  "dependencies": {
+    "async-mutex": "^0.5.0",
+    "axios": "^1.13.1",
+    "bignumber.js": "^9.3.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@stylistic/eslint-plugin": "^5.5.0",
+    "@types/node": "^24.10.0",
+    "eslint": "^9.39.0",
+    "homebridge": "^1.11.1",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.2"
+  }
+}
