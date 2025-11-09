@@ -2,9 +2,9 @@
 
 Uponor Smatrix Pulse heating/cooling integration for Homebridge.
 
-## About this Fork
+## About this Plugin
 
-This plugin is a fork and continuation of the original [homebridge-plugin-uponor](https://github.com/alexmobo/homebridge-plugin-uponor). The primary goal of this fork is to modernize and maintain the plugin.
+This plugin is based on and continues the work of the original [homebridge-plugin-uponor](https://github.com/alexmobo/homebridge-plugin-uponor). The primary goal is to modernize and maintain the plugin with ongoing updates and improvements.
 
 ## Installation
 
