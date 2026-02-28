@@ -345,14 +345,12 @@ describe('UponorAPIData', () => {
       expect(active).toBe(false);
     });
 
-    it('should return true when thermostat is on in heating mode', () => {
+    it('should return true when actuator is active', () => {
       const response: UponorJNAPGetResponse = {
         result: 'OK',
         output: {
           vars: [
-            { waspVarName: 'sys_heat_cool_mode', waspVarValue: '0' },
-            { waspVarName: 'C1_T1_room_temperature', waspVarValue: '680' }, // 20°C
-            { waspVarName: 'C1_T1_minimum_setpoint', waspVarValue: '410' }, // 5°C
+            { waspVarName: 'C1_T1_stat_cb_actuator', waspVarValue: '1' },
           ],
         },
       };
@@ -363,14 +361,12 @@ describe('UponorAPIData', () => {
       expect(isOn).toBe(true);
     });
 
-    it('should return false when temperature at minimum in heating mode', () => {
+    it('should return false when actuator is inactive', () => {
       const response: UponorJNAPGetResponse = {
         result: 'OK',
         output: {
           vars: [
-            { waspVarName: 'sys_heat_cool_mode', waspVarValue: '0' },
-            { waspVarName: 'C1_T1_room_temperature', waspVarValue: '410' }, // 5°C
-            { waspVarName: 'C1_T1_minimum_setpoint', waspVarValue: '410' }, // 5°C
+            { waspVarName: 'C1_T1_stat_cb_actuator', waspVarValue: '0' },
           ],
         },
       };
