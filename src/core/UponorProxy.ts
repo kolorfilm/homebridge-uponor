@@ -97,10 +97,7 @@ export const createUponorProxy = (
         isOn: uponorData!.isOn(code),
         isCoolingEnabled: coolingEnabled,
         isEcoEnabled: uponorData!.isEcoEnabled(code),
-        currentHvacMode: toUponorCurrentHvacMode(
-          uponorData!.isOn(code),
-          coolingEnabled
-        ),
+        currentHvacMode: toUponorCurrentHvacMode(uponorData!.isOn(code), coolingEnabled),
         currentTemperature: calculateCurrentTemperature(code),
         targetTemperature: calculateTargetTemperature(code),
         minLimitTemperature: getMinLimitTemperature(code),

@@ -79,8 +79,9 @@ describe('UponorAPI', () => {
 
       const api = createUponorAPI(mockLogger, '192.168.1.100');
       const data = await api.getData();
-      const codes = await data.getDeviceCodes();
 
+      expect(data).not.toBeNull();
+      const codes = await data!.getDeviceCodes();
       expect(codes).toEqual(['C1_T1']);
     });
 

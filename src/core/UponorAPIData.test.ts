@@ -349,9 +349,7 @@ describe('UponorAPIData', () => {
       const response: UponorJNAPGetResponse = {
         result: 'OK',
         output: {
-          vars: [
-            { waspVarName: 'C1_T1_stat_cb_actuator', waspVarValue: '1' },
-          ],
+          vars: [{ waspVarName: 'C1_T1_stat_cb_actuator', waspVarValue: '1' }],
         },
       };
 
@@ -365,9 +363,7 @@ describe('UponorAPIData', () => {
       const response: UponorJNAPGetResponse = {
         result: 'OK',
         output: {
-          vars: [
-            { waspVarName: 'C1_T1_stat_cb_actuator', waspVarValue: '0' },
-          ],
+          vars: [{ waspVarName: 'C1_T1_stat_cb_actuator', waspVarValue: '0' }],
         },
       };
 
