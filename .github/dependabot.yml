@@ -11,6 +11,13 @@ updates:
       prefix: '🤖 [Main App]'
       include: scope
     open-pull-requests-limit: 25
+    ignore:
+      - dependency-name: 'eslint'
+        versions: ['>=10']
+      - dependency-name: '@eslint/js'
+        versions: ['>=10']
+      - dependency-name: 'eslint-plugin-import'
+        versions: ['>=3']
     groups:
       production-dependencies:
         dependency-type: 'production'
