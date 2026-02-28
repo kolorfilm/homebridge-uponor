@@ -79,8 +79,9 @@ describe('UponorAPI', () => {
 
       const api = createUponorAPI(mockLogger, '192.168.1.100');
       const data = await api.getData();
-      const codes = await data.getDeviceCodes();
 
+      expect(data).not.toBeNull();
+      const codes = await data!.getDeviceCodes();
       expect(codes).toEqual(['C1_T1']);
     });
 
@@ -101,7 +102,7 @@ describe('UponorAPI', () => {
       );
     });
 
-    it('should return empty data on ECONNRESET error', async () => {
+    it('should return null on ECONNRESET error', async () => {
       const error = new Error('Connection reset');
       (error as Error & { code: string }).code = 'ECONNRESET';
 
@@ -109,9 +110,8 @@ describe('UponorAPI', () => {
 
       const api = createUponorAPI(mockLogger, '192.168.1.100');
       const data = await api.getData();
-      const codes = await data.getDeviceCodes();
 
-      expect(codes).toEqual([]);
+      expect(data).toBeNull();
     });
 
     it('should log warning on ECONNRESET error', async () => {
@@ -128,7 +128,7 @@ describe('UponorAPI', () => {
       );
     });
 
-    it('should return empty data on ECONNREFUSED error', async () => {
+    it('should return null on ECONNREFUSED error', async () => {
       const error = new Error('Connection refused');
       (error as Error & { code: string }).code = 'ECONNREFUSED';
 
@@ -136,9 +136,8 @@ describe('UponorAPI', () => {
 
       const api = createUponorAPI(mockLogger, '192.168.1.100');
       const data = await api.getData();
-      const codes = await data.getDeviceCodes();
 
-      expect(codes).toEqual([]);
+      expect(data).toBeNull();
     });
 
     it('should log error on ECONNREFUSED error', async () => {
@@ -155,7 +154,7 @@ describe('UponorAPI', () => {
       );
     });
 
-    it('should return empty data on ETIMEDOUT error', async () => {
+    it('should return null on ETIMEDOUT error', async () => {
       const error = new Error('Connection timed out');
       (error as Error & { code: string }).code = 'ETIMEDOUT';
 
@@ -163,9 +162,8 @@ describe('UponorAPI', () => {
 
       const api = createUponorAPI(mockLogger, '192.168.1.100');
       const data = await api.getData();
-      const codes = await data.getDeviceCodes();
 
-      expect(codes).toEqual([]);
+      expect(data).toBeNull();
     });
 
     it('should log warning on ETIMEDOUT error', async () => {
@@ -182,16 +180,15 @@ describe('UponorAPI', () => {
       );
     });
 
-    it('should return empty data on generic error', async () => {
+    it('should return null on generic error', async () => {
       const error = new Error('Generic error');
 
       (axios as unknown as ReturnType<typeof vi.fn>).mockRejectedValue(error);
 
       const api = createUponorAPI(mockLogger, '192.168.1.100');
       const data = await api.getData();
-      const codes = await data.getDeviceCodes();
 
-      expect(codes).toEqual([]);
+      expect(data).toBeNull();
     });
 
     it('should log error on generic error', async () => {

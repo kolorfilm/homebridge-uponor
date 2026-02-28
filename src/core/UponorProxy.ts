@@ -46,7 +46,12 @@ export const createUponorProxy = (
         return;
       }
 
-      uponorData = await uponorApi.getData();
+      const freshData = await uponorApi.getData();
+      if (freshData !== null) {
+        uponorData = freshData;
+      } else {
+        log.warn('API returned no data, keeping previous state');
+      }
       lastUpdatedAt = new Date();
     });
 
@@ -81,6 +86,7 @@ export const createUponorProxy = (
   const getDevices = async (): Promise<UponorDevice[]> => {
     await updateData();
     const deviceCodes: string[] = await uponorData!.getDeviceCodes();
+    const coolingEnabled = uponorData!.isCoolingEnabled();
     return deviceCodes.map((code: string): UponorDevice => {
       return {
         id: uponorData!.getId(code),
@@ -89,11 +95,9 @@ export const createUponorProxy = (
         model: uponorData!.getModel(),
         version: uponorData!.getVersion(code),
         isOn: uponorData!.isOn(code),
+        isCoolingEnabled: coolingEnabled,
         isEcoEnabled: uponorData!.isEcoEnabled(code),
-        currentHvacMode: toUponorCurrentHvacMode(
-          uponorData!.isOn(code),
-          uponorData!.isCoolingEnabled()
-        ),
+        currentHvacMode: toUponorCurrentHvacMode(uponorData!.isOn(code), coolingEnabled),
         currentTemperature: calculateCurrentTemperature(code),
         targetTemperature: calculateTargetTemperature(code),
         minLimitTemperature: getMinLimitTemperature(code),

@@ -118,10 +118,7 @@ const createUponorAPIData = (initialData: Record<string, string>): UponorAPIData
   };
 
   const isOn = (thermostat: string): boolean => {
-    return !(
-      (isCoolingEnabled() && getCurrentTemperature(thermostat).gte(getMaxLimit(thermostat))) ||
-      (!isCoolingEnabled() && getCurrentTemperature(thermostat).lte(getMinLimit(thermostat)))
-    );
+    return isActive(thermostat);
   };
 
   const getId = (thermostat: string): string => {
