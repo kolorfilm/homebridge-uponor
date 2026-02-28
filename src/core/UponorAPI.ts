@@ -2,7 +2,6 @@ import axios, { AxiosResponse } from 'axios';
 import { Logger } from 'homebridge';
 import {
   createUponorAPIDataFromResponse,
-  createEmptyUponorAPIData,
   UponorAPIData,
   UponorJNAPGetResponse,
   UponorJNAPSetPayload,
@@ -16,7 +15,7 @@ enum UponorActionHeaderValue {
 }
 
 export interface UponorAPI {
-  getData: () => Promise<UponorAPIData>;
+  getData: () => Promise<UponorAPIData | null>;
   setData: (payload: UponorJNAPSetPayload) => Promise<void>;
 }
 
@@ -56,7 +55,7 @@ export const createUponorAPI = (log: Logger, host: string): UponorAPI => {
     log.error(`Error ${operationText} Uponor API:`, error.message);
   };
 
-  const getData = async (): Promise<UponorAPIData> => {
+  const getData = async (): Promise<UponorAPIData | null> => {
     try {
       const result: AxiosResponse<UponorJNAPGetResponse> = await axios<UponorJNAPGetResponse>({
         method: 'post',
@@ -71,7 +70,7 @@ export const createUponorAPI = (log: Logger, host: string): UponorAPI => {
       return createUponorAPIDataFromResponse(result.data);
     } catch (error) {
       handleApiError(error, 'get');
-      return createEmptyUponorAPIData();
+      return null;
     }
   };
 

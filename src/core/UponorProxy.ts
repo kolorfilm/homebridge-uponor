@@ -46,7 +46,12 @@ export const createUponorProxy = (
         return;
       }
 
-      uponorData = await uponorApi.getData();
+      const freshData = await uponorApi.getData();
+      if (freshData !== null) {
+        uponorData = freshData;
+      } else {
+        log.warn('API returned no data, keeping previous state');
+      }
       lastUpdatedAt = new Date();
     });
 
