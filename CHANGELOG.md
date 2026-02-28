@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0-beta.0] - 2026-02-28
+
+### Changed
+
+- HVAC mode detection now uses actuator state (`stat_cb_actuator`) for more reliable mode reporting
+- Updated README to reflect current repository and maintenance status
+- Updated production and development dependencies via Dependabot batches
+- Added Dependabot guardrail to prevent ESLint v10 proposals until peer dependencies are compatible
+
+### Fixed
+
+- Prevented `TargetHeatingCoolingState` from being set to OFF unexpectedly
+- Preserved the previous HVAC state on API errors instead of resetting to OFF
+- Applied npm audit lockfile fixes for vulnerable transitive dependencies
+
 ## [1.3.0] - 2025-11-09
 
 ### Added
