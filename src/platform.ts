@@ -185,6 +185,15 @@ export class UponorPlatform implements DynamicPlatformPlugin {
   }
 
   /**
+   * Converts cooling mode flag to HomeKit TargetHeatingCoolingState
+   */
+  private toTargetHeatingCoolingState(isCoolingEnabled: boolean): number {
+    return isCoolingEnabled
+      ? this.Characteristic.TargetHeatingCoolingState.COOL
+      : this.Characteristic.TargetHeatingCoolingState.HEAT;
+  }
+
+  /**
    * Starts the background polling interval to update all accessories
    */
   private startPolling(): void {
@@ -256,6 +265,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
     accessory.context.currentHumidity = device.currentHumidity;
     accessory.context.name = device.name;
     accessory.context.isOn = device.isOn;
+    accessory.context.isCoolingEnabled = device.isCoolingEnabled;
 
     // Get service and update characteristics
     const service = accessory.getService(this.Service.Thermostat);
@@ -268,6 +278,12 @@ export class UponorPlatform implements DynamicPlatformPlugin {
     service
       .getCharacteristic(this.Characteristic.CurrentHeatingCoolingState)
       .updateValue(hvacState);
+
+    // Target Heating Cooling State (HEAT or COOL based on system mode)
+    const targetState = this.toTargetHeatingCoolingState(device.isCoolingEnabled);
+    service
+      .getCharacteristic(this.Characteristic.TargetHeatingCoolingState)
+      .updateValue(targetState);
 
     // Current Temperature
     const currentTemp = device.currentTemperature?.toNumber();

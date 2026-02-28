@@ -7,6 +7,7 @@ export type UponorDevice = {
   model: string;
   version: string;
   isOn: boolean;
+  isCoolingEnabled: boolean;
   isEcoEnabled: boolean;
   currentHvacMode: UponorDeviceState;
   currentTemperature: BigNumber | undefined;

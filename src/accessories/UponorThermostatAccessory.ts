@@ -24,6 +24,15 @@ const toCurrentHeatingCoolingState = (
   }
 };
 
+const toTargetHeatingCoolingState = (
+  platform: UponorPlatform,
+  isCoolingEnabled: boolean
+): number => {
+  return isCoolingEnabled
+    ? platform.Characteristic.TargetHeatingCoolingState.COOL
+    : platform.Characteristic.TargetHeatingCoolingState.HEAT;
+};
+
 export const createUponorThermostatAccessory = (
   platform: UponorPlatform,
   accessory: PlatformAccessory<UponorDevice>
@@ -45,9 +54,18 @@ export const createUponorThermostatAccessory = (
     platform.Characteristic.CurrentHeatingCoolingState,
     toCurrentHeatingCoolingState(platform, accessory.context.currentHvacMode)
   );
+
+  // Restrict TargetHeatingCoolingState to HEAT/COOL only (no OFF) since
+  // Uponor thermostats cannot be turned off individually
+  service.getCharacteristic(platform.Characteristic.TargetHeatingCoolingState).setProps({
+    validValues: [
+      platform.Characteristic.TargetHeatingCoolingState.HEAT,
+      platform.Characteristic.TargetHeatingCoolingState.COOL,
+    ],
+  });
   service.setCharacteristic(
     platform.Characteristic.TargetHeatingCoolingState,
-    platform.Characteristic.TargetHeatingCoolingState.AUTO
+    toTargetHeatingCoolingState(platform, accessory.context.isCoolingEnabled)
   );
 
   // Validate and set temperature values
@@ -120,6 +138,18 @@ export const createUponorThermostatAccessory = (
     .getCharacteristic(platform.Characteristic.CurrentHeatingCoolingState)
     .onGet((): CharacteristicValue => {
       return toCurrentHeatingCoolingState(platform, accessory.context.currentHvacMode);
+    });
+
+  service
+    .getCharacteristic(platform.Characteristic.TargetHeatingCoolingState)
+    .onGet((): CharacteristicValue => {
+      return toTargetHeatingCoolingState(platform, accessory.context.isCoolingEnabled);
+    })
+    .onSet((value: CharacteristicValue): void => {
+      platform.log.info(
+        `[${deviceName}] TargetHeatingCoolingState change requested to ${value} - ` +
+          'mode is controlled system-wide via the cooling switch'
+      );
     });
 
   service.getCharacteristic(platform.Characteristic.CurrentTemperature).onGet(
