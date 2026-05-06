@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0-beta.0] - 2026-05-06
+
+### Added
+
+- Homebridge v2 compatibility: the plugin now declares support for both Homebridge v1 and v2
+  via `engines.homebridge: ^1.11.1 || ^2.0.0`, following the official
+  [Homebridge v2 migration guide](https://github.com/homebridge/homebridge/wiki/Updating-To-Homebridge-v2.0)
+
+### Changed
+
+- Bumped `engines.node` to `^22.12.0 || ^24.0.0` to align with the Homebridge v2 recommendation
+- Bumped the `homebridge` development dependency to `^2.0.1` so lint, type-checking, tests, and
+  the build run against the v2 API surface
+- Refactored to use the `Logging` interface instead of the concrete `Logger` class, which is the
+  more idiomatic typing for Homebridge plugins (no functional change)
+
+### Notes
+
+- No source-level breaking changes were required: the plugin already uses `api.hap.*` helpers,
+  `DynamicPlatformPlugin`, and modern `onGet`/`onSet` characteristic handlers, and does not depend
+  on any of the APIs removed in HAP-NodeJS v1 (`BatteryService`, `Characteristic.Units/Formats/Perms`,
+  `Characteristic.getValue()`, `Accessory.updateReachability()`, etc.)
+
 ## [1.4.0] - 2026-03-12
 
 ### Changed
