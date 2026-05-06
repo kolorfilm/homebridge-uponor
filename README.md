@@ -9,7 +9,7 @@ This plugin is based on and continues the work of the original [homebridge-plugi
 ## Compatibility
 
 - Homebridge: `v1.11.1+` and `v2.x` (see the [Homebridge v2 migration guide](https://github.com/homebridge/homebridge/wiki/Updating-To-Homebridge-v2.0))
-- Node.js: `v22.12+` or `v24+`
+- Node.js: `v22.13+` or `v24+`
 
 ## Installation
 

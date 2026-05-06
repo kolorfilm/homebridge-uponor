@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Bumped `engines.node` to `^22.12.0 || ^24.0.0` to align with the Homebridge v2 recommendation
+- Bumped `engines.node` to `^22.13.0 || ^24.0.0` to align with the Homebridge v2 recommendation
+  and to satisfy the stricter requirement of `@matter/nodejs` (`>=22.13.0` on the Node 22 line)
 - Bumped the `homebridge` development dependency to `^2.0.1` so lint, type-checking, tests, and
   the build run against the v2 API surface
 - Refactored to use the `Logging` interface instead of the concrete `Logger` class, which is the
