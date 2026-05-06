@@ -3,7 +3,7 @@ import {
   Categories,
   Characteristic,
   DynamicPlatformPlugin,
-  Logger,
+  Logging,
   PlatformAccessory,
   PlatformConfig,
   Service,
@@ -36,7 +36,7 @@ export class UponorPlatform implements DynamicPlatformPlugin {
   private readonly POLLING_INTERVAL_MS = 10000; // 10 seconds
 
   constructor(
-    public readonly log: Logger,
+    public readonly log: Logging,
     public readonly config: PlatformConfig,
     public readonly api: API
   ) {

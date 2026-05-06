@@ -1,7 +1,7 @@
 import { createUponorAPI, UponorAPI } from './UponorAPI';
 import { UponorDevice, UponorDeviceState } from '../devices/UponorDevice';
 import { Mutex } from 'async-mutex';
-import { Logger } from 'homebridge';
+import { Logging } from 'homebridge';
 import { UponorAPIData } from './UponorAPIData';
 import BigNumber from 'bignumber.js';
 import { TemperatureDisplayUnit } from '../settings';
@@ -31,7 +31,7 @@ export interface UponorProxy {
 }
 
 export const createUponorProxy = (
-  log: Logger,
+  log: Logging,
   host: string,
   displayUnit: TemperatureDisplayUnit
 ): UponorProxy => {
