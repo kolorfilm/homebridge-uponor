@@ -2,7 +2,7 @@ import { createUponorProxy, UponorProxy } from './UponorProxy';
 import { UponorDeviceState } from '../devices/UponorDevice';
 import { TemperatureDisplayUnit } from '../settings';
 import BigNumber from 'bignumber.js';
-import type { Logger } from 'homebridge';
+import type { Logging } from 'homebridge';
 import type { UponorAPI } from './UponorAPI';
 import type { UponorAPIData } from './UponorAPIData';
 
@@ -19,7 +19,7 @@ vi.mock('async-mutex', () => ({
 }));
 
 describe('UponorProxy', () => {
-  let mockLogger: Logger;
+  let mockLogger: Logging;
   let mockUponorApi: UponorAPI;
   let mockUponorData: UponorAPIData;
   let proxy: UponorProxy;
@@ -34,7 +34,7 @@ describe('UponorProxy', () => {
       info: vi.fn(),
       warn: vi.fn(),
       error: vi.fn(),
-    } as unknown as Logger;
+    } as unknown as Logging;
 
     // Setup mock API data
     mockUponorData = {

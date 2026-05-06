@@ -6,6 +6,11 @@ Uponor Smatrix Pulse heating/cooling integration for Homebridge.
 
 This plugin is based on and continues the work of the original [homebridge-plugin-uponor](https://github.com/alexmobo/homebridge-plugin-uponor). The primary goal is to modernize and maintain the plugin with ongoing updates and improvements.
 
+## Compatibility
+
+- Homebridge: `v1.11.1+` and `v2.x` (see the [Homebridge v2 migration guide](https://github.com/homebridge/homebridge/wiki/Updating-To-Homebridge-v2.0))
+- Node.js: `v22.13+` or `v24+`
+
 ## Installation
 
 Install the plugin via the Homebridge UI or manually via npm:

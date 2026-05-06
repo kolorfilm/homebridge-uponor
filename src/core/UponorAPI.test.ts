@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { Logger } from 'homebridge';
+import { Logging } from 'homebridge';
 import { createUponorAPI } from './UponorAPI';
 import { UponorJNAPGetResponse, UponorJNAPSetPayload } from './UponorAPIData';
 
 vi.mock('axios');
 
 describe('UponorAPI', () => {
-  let mockLogger: Logger;
+  let mockLogger: Logging;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -18,7 +18,7 @@ describe('UponorAPI', () => {
       debug: vi.fn(),
       log: vi.fn(),
       success: vi.fn(),
-    } as unknown as Logger;
+    } as unknown as Logging;
   });
 
   describe('createUponorAPI', () => {

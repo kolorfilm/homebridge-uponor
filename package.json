@@ -1,6 +1,6 @@
 {
   "name": "homebridge-uponor",
-  "version": "1.4.0",
+  "version": "1.5.0-beta.0",
   "author": "Michael Päßler",
   "displayName": "Homebridge Uponor",
   "description": "Homebridge plugin for Uponor underfloor heating and cooling systems",
@@ -13,8 +13,8 @@
     "url": "https://github.com/kolorfilm/homebridge-uponor/issues"
   },
   "engines": {
-    "node": "^24||^22",
-    "homebridge": "^1.11.1"
+    "node": "^22.13.0 || ^24.0.0",
+    "homebridge": "^1.11.1 || ^2.0.0"
   },
   "main": "dist/index.js",
   "files": [
@@ -60,7 +60,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "globals": "^17.0.0",
-    "homebridge": "^1.11.1",
+    "homebridge": "^2.0.1",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "rimraf": "^6.1.0",

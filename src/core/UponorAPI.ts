@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { Logger } from 'homebridge';
+import { Logging } from 'homebridge';
 import {
   createUponorAPIDataFromResponse,
   UponorAPIData,
@@ -19,7 +19,7 @@ export interface UponorAPI {
   setData: (payload: UponorJNAPSetPayload) => Promise<void>;
 }
 
-export const createUponorAPI = (log: Logger, host: string): UponorAPI => {
+export const createUponorAPI = (log: Logging, host: string): UponorAPI => {
   const endpoint = `http://${host}/JNAP/`;
 
   const handleApiError = (error: unknown, operation: 'get' | 'set'): void => {
