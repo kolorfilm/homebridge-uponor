@@ -5,14 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.0-beta.1] - 2026-05-06
-
-### Changed
-
-- Updated development dependencies via Dependabot batch (incl. TypeScript 5 → 6)
-- Set `tsconfig.json` `ignoreDeprecations: "6.0"` to keep `moduleResolution: "node"` working under TypeScript 6
-
-## [1.5.0-beta.0] - 2026-05-06
+## [1.5.0] - 2026-05-08
 
 ### Added
 
@@ -31,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumped `bignumber.js` 10 → 11 (production, major)
 - Bumped `axios` 1.13.1 → 1.15.0 (production)
 - Updated production and development dependencies via Dependabot batches
-  (incl. `follow-redirects`, `postcss`, `flatted`, `picomatch`, `vite`)
+  (incl. `follow-redirects`, `postcss`, `flatted`, `picomatch`, `vite`, TypeScript 5 → 6)
+- Set `tsconfig.json` `ignoreDeprecations: "6.0"` to keep `moduleResolution: "node"` working under TypeScript 6
 - Applied npm audit lockfile fixes for vulnerable transitive dependencies
 
 ### Notes
