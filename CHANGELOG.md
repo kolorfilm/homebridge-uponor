@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-07-03
+
+### Changed
+
+- Bumped `axios` 1.15.x → 1.18.1 (production)
+- Bumped `bignumber.js` 11.1.2 → 11.1.4 (production)
+- Updated development dependencies via Dependabot batches
+  (incl. `@types/node` 25 → 26, `homebridge` 2.0.2 → 2.1.0, `vitest` 4.1.8 → 4.1.9,
+  `prettier`, `typescript-eslint`)
+- Bumped `actions/checkout` v6 → v7 in GitHub Actions workflows
+
+### Fixed
+
+- Applied npm audit lockfile fixes for vulnerable transitive dependencies
+
 ## [1.5.0] - 2026-05-08
 
 ### Added
