@@ -18,6 +18,10 @@ updates:
         versions: ['>=10']
       - dependency-name: 'eslint-plugin-import'
         versions: ['>=3']
+      # typescript-eslint needs the TS JS Compiler API; TS 7.0 removed it (expected back in 7.1).
+      # See https://github.com/typescript-eslint/typescript-eslint/issues/12518
+      - dependency-name: 'typescript'
+        versions: ['>=7']
     groups:
       production-dependencies:
         dependency-type: 'production'
