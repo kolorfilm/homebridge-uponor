@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2026-10-06
+
+### Changed
+
+- Bumped `axios` 1.18.1 → 1.20.0 (production)
+- Bumped `bignumber.js` 11.1.4 → 11.1.5 (production)
+- Updated development dependencies via Dependabot batches
+  (incl. `vitest` and `@vitest/coverage-v8` 4 → 5, `homebridge` 2.1.0 → 2.4.0,
+  `@types/node` 26.1.0 → 26.6.3, `typescript-eslint`, `prettier`, `eslint`, `globals`)
+- Bumped `actions/setup-node` v6 → v7 in GitHub Actions workflows
+- Added Dependabot guardrail to prevent TypeScript 7 proposals until `typescript-eslint` supports it
+
+### Fixed
+
+- Applied npm audit lockfile fixes and security bumps for vulnerable transitive dependencies
+  (incl. `brace-expansion`, `js-yaml`, `postcss`, `@humanfs/node`)
+
 ## [1.6.0] - 2026-07-03
 
 ### Changed
